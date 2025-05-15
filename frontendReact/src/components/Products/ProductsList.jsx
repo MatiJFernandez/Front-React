@@ -3,7 +3,7 @@ import axios from 'axios';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import ProductForm from './ProductForm'; 
+import ProductForm from './ProductForm';   
 
 const API_URL = 'http://localhost:3000/productos';
 
