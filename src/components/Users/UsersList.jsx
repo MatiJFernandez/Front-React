@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import UserForm from './UserForm';
 import { toast } from 'react-toastify';
+import { exportUsersToPDF } from '../../utils/pdfExport';
 
 const API_URL = 'http://localhost:3000/usuarios';
 
@@ -41,9 +42,18 @@ export default function UsersList() {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl mb-4 font-bold text-blue-700 flex items-center gap-2">
-        <span className="text-2xl">👤</span> Lista de Usuarios
-      </h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2">
+          <span className="text-2xl">👤</span> Lista de Usuarios
+        </h2>
+        <button
+          onClick={() => exportUsersToPDF(usuarios)}
+          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow transition flex items-center gap-2"
+          title="Exportar a PDF"
+        >
+          <i className="pi pi-file-pdf" /> Exportar PDF
+        </button>
+      </div>
       <UserForm
         usuarioEditar={usuarioEditar}
         onUsuarioGuardado={handleUsuarioGuardado}
