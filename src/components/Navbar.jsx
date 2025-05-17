@@ -11,7 +11,9 @@ export default function Navbar() {
   return (
     <nav className="w-full bg-white/90 backdrop-blur shadow-md mb-8 sticky top-0 z-50">
       <div className="max-w-4xl mx-auto flex items-center justify-between px-4 py-3">
-        <span className="text-2xl font-extrabold text-blue-700 tracking-tight drop-shadow">Mi App</span>
+        <span className="text-2xl font-extrabold text-blue-700 tracking-tight drop-shadow flex items-center gap-2">
+          <span className="text-3xl">🛒</span> Mi App
+        </span>
         <div className="flex gap-2">
           <Link to="/" className={linkClass('/')}>Home</Link>
           <Link to="/productos" className={linkClass('/productos')}>Productos</Link>
