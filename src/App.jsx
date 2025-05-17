@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './components/Home';
 import { ToastContainer } from 'react-toastify';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
@@ -17,9 +18,25 @@ function App() {
         <main className="flex-grow flex flex-col items-center py-8">
           <div className="w-full max-w-4xl bg-white rounded-xl shadow-lg p-8 mt-4 mb-8">
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/productos" element={<div className="bg-blue-50 rounded-lg shadow p-6"><ProductsList /></div>} />
-              <Route path="/usuarios" element={<div className="bg-blue-50 rounded-lg shadow p-6"><UsersList /></div>} />
+              <Route path="/" element={
+                <ErrorBoundary section="inicio">
+                  <Home />
+                </ErrorBoundary>
+              } />
+              <Route path="/productos" element={
+                <ErrorBoundary section="productos">
+                  <div className="bg-blue-50 rounded-lg shadow p-6">
+                    <ProductsList />
+                  </div>
+                </ErrorBoundary>
+              } />
+              <Route path="/usuarios" element={
+                <ErrorBoundary section="usuarios">
+                  <div className="bg-blue-50 rounded-lg shadow p-6">
+                    <UsersList />
+                  </div>
+                </ErrorBoundary>
+              } />
             </Routes>
           </div>
         </main>
