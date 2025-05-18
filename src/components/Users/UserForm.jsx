@@ -1,6 +1,7 @@
 // src/components/Users/UserForm.jsx
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 
 const API_URL = 'http://localhost:3000/usuarios';
 
@@ -8,6 +9,7 @@ export default function UserForm({ usuarioEditar, onUsuarioGuardado, limpiarEdic
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [edad, setEdad] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (usuarioEditar) {
@@ -19,6 +21,7 @@ export default function UserForm({ usuarioEditar, onUsuarioGuardado, limpiarEdic
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     const data = { nombre, email, edad };
 
     try {
@@ -35,11 +38,13 @@ export default function UserForm({ usuarioEditar, onUsuarioGuardado, limpiarEdic
       limpiarEdicion();
     } catch (error) {
       console.error('Error al guardar usuario:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <form 
+    <motion.form 
       onSubmit={handleSubmit} 
       className="
         w-full max-w-2xl mx-auto 
@@ -49,6 +54,9 @@ export default function UserForm({ usuarioEditar, onUsuarioGuardado, limpiarEdic
         border border-blue-100
         md:flex-row md:flex-wrap md:items-end
       "
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
     >
       {/* Grupo de campo Nombre */}
       <div className="flex flex-col flex-1 min-w-[140px] sm:min-w-[180px]">
@@ -157,7 +165,7 @@ export default function UserForm({ usuarioEditar, onUsuarioGuardado, limpiarEdic
         min-w-[120px] sm:min-w-[140px]
         mt-2 md:mt-0
       ">
-        <button
+        <motion.button
           type="submit"
           className="
             h-10 sm:h-12
@@ -174,13 +182,25 @@ export default function UserForm({ usuarioEditar, onUsuarioGuardado, limpiarEdic
             focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
           "
           aria-label={usuarioEditar ? "Actualizar usuario" : "Agregar usuario"}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          disabled={isSubmitting}
         >
-          <i className={`pi ${usuarioEditar ? 'pi-save' : 'pi-plus'} text-sm sm:text-base`} />
-          {usuarioEditar ? 'Actualizar' : 'Agregar'}
-        </button>
+          {isSubmitting ? (
+            <>
+              <i className="pi pi-spin pi-spinner" />
+              Guardando...
+            </>
+          ) : (
+            <>
+              <i className={`pi ${usuarioEditar ? 'pi-save' : 'pi-plus'} text-sm sm:text-base`} />
+              {usuarioEditar ? 'Actualizar' : 'Agregar'}
+            </>
+          )}
+        </motion.button>
 
         {usuarioEditar && (
-          <button
+          <motion.button
             type="button"
             onClick={limpiarEdicion}
             className="
@@ -199,11 +219,14 @@ export default function UserForm({ usuarioEditar, onUsuarioGuardado, limpiarEdic
               focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
             "
             aria-label="Cancelar edición"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <i className="pi pi-times text-sm sm:text-base" /> Cancelar
-          </button>
+            <i className="pi pi-times text-sm sm:text-base" /> 
+            Cancelar
+          </motion.button>
         )}
       </div>
-    </form>
+    </motion.form>
   );
 }

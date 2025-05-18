@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 
 const API_URL = 'http://localhost:3000/productos';
 
 export default function ProductForm({ onProductSaved, productoEditar, limpiarEdicion }) {
   const [nombre, setNombre] = useState('');
   const [precio, setPrecio] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (productoEditar) {
@@ -16,6 +18,7 @@ export default function ProductForm({ onProductSaved, productoEditar, limpiarEdi
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       if (productoEditar) {
         const actualizado = { ...productoEditar, nombre, precio };
@@ -31,11 +34,13 @@ export default function ProductForm({ onProductSaved, productoEditar, limpiarEdi
       limpiarEdicion();
     } catch (error) {
       console.error('Error al guardar producto', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <form 
+    <motion.form 
       onSubmit={handleSubmit} 
       className="
         w-full max-w-2xl mx-auto 
@@ -45,6 +50,9 @@ export default function ProductForm({ onProductSaved, productoEditar, limpiarEdi
         border border-blue-100
         md:flex-row md:flex-wrap md:items-end
       "
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
     >
       <div className="flex flex-col flex-1 min-w-[140px] sm:min-w-[200px]">
         <label 
@@ -75,6 +83,7 @@ export default function ProductForm({ onProductSaved, productoEditar, limpiarEdi
           aria-label="Nombre del producto"
         />
       </div>
+
       <div className="flex flex-col flex-1 min-w-[120px] sm:min-w-[150px]">
         <label 
           htmlFor="precio" 
@@ -83,7 +92,9 @@ export default function ProductForm({ onProductSaved, productoEditar, limpiarEdi
           Precio
         </label>
         <div className="relative">
-          <span className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm sm:text-base">$</span>
+          <span className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm sm:text-base">
+            $
+          </span>
           <input
             id="precio"
             type="number"
@@ -112,6 +123,7 @@ export default function ProductForm({ onProductSaved, productoEditar, limpiarEdi
           />
         </div>
       </div>
+
       <div className="
         flex flex-row gap-2 
         md:flex-col md:justify-end 
@@ -119,7 +131,7 @@ export default function ProductForm({ onProductSaved, productoEditar, limpiarEdi
         min-w-[120px] sm:min-w-[140px]
         mt-2 md:mt-0
       ">
-        <button
+        <motion.button
           type="submit"
           className="
             h-10 sm:h-12
@@ -136,12 +148,25 @@ export default function ProductForm({ onProductSaved, productoEditar, limpiarEdi
             focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
           "
           aria-label={productoEditar ? "Actualizar producto" : "Agregar producto"}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          disabled={isSubmitting}
         >
-          <i className={`pi ${productoEditar ? 'pi-save' : 'pi-plus'} text-sm sm:text-base`} />
-          {productoEditar ? 'Actualizar' : 'Agregar'}
-        </button>
+          {isSubmitting ? (
+            <>
+              <i className="pi pi-spin pi-spinner" />
+              Guardando...
+            </>
+          ) : (
+            <>
+              <i className={`pi ${productoEditar ? 'pi-save' : 'pi-plus'} text-sm sm:text-base`} />
+              {productoEditar ? 'Actualizar' : 'Agregar'}
+            </>
+          )}
+        </motion.button>
+
         {productoEditar && (
-          <button
+          <motion.button
             type="button"
             onClick={limpiarEdicion}
             className="
@@ -160,11 +185,14 @@ export default function ProductForm({ onProductSaved, productoEditar, limpiarEdi
               focus:ring-2 focus:ring-gray-500 focus:ring-offset-2
             "
             aria-label="Cancelar edición"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <i className="pi pi-times text-sm sm:text-base" /> Cancelar
-          </button>
+            <i className="pi pi-times text-sm sm:text-base" /> 
+            Cancelar
+          </motion.button>
         )}
       </div>
-    </form>
+    </motion.form>
   );
 }

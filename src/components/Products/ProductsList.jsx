@@ -4,7 +4,7 @@ import ProductForm from './ProductForm';
 import { toast } from 'react-toastify';
 import { exportProductsToPDF } from '../../utils/pdfExport';
 import TableSkeleton from '../common/TableSkeleton';
-import { Button } from 'primereact/button';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const API_URL = 'http://localhost:3000/productos';
 
@@ -75,13 +75,48 @@ export default function ProductsList() {
     }
   };
 
+  // Variantes para las animaciones de la lista
+  const listVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { duration: 0.3 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.05,
+        duration: 0.2
+      }
+    }),
+    exit: { 
+      opacity: 0,
+      x: -20,
+      transition: { duration: 0.2 }
+    }
+  };
+
   return (
-    <div className="p-4">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+    <motion.div 
+      className="p-4"
+      initial="hidden"
+      animate="visible"
+      variants={listVariants}
+    >
+      <motion.div 
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4"
+        variants={itemVariants}
+        custom={0}
+      >
         <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2">
           <span className="text-2xl">🛒</span> Lista de Productos
         </h2>
-        <button
+        <motion.button
           onClick={() => exportProductsToPDF(productos)}
           className="
             bg-green-500 hover:bg-green-600 
@@ -94,23 +129,36 @@ export default function ProductsList() {
           "
           title="Exportar a PDF"
           disabled={isLoading || productos.length === 0}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
           <i className="pi pi-file-pdf" /> Exportar PDF
-        </button>
-      </div>
-      <ProductForm
-        onProductSaved={handleProductSaved}
-        productoEditar={productoEditar}
-        limpiarEdicion={() => setProductoEditar(null)}
-      />
+        </motion.button>
+      </motion.div>
+
+      <motion.div variants={itemVariants} custom={1}>
+        <ProductForm
+          onProductSaved={handleProductSaved}
+          productoEditar={productoEditar}
+          limpiarEdicion={() => setProductoEditar(null)}
+        />
+      </motion.div>
+
       <div className="mt-6">
         {isLoading ? (
-          <div className="p-4">
+          <motion.div 
+            className="p-4"
+            variants={itemVariants}
+            custom={2}
+          >
             <TableSkeleton rows={5} columns={4} />
-          </div>
+          </motion.div>
         ) : (
-          <>
-            <div className="hidden md:block overflow-x-auto rounded-lg shadow border border-blue-100 bg-white">
+          <AnimatePresence>
+            <motion.div 
+              className="hidden md:block overflow-x-auto rounded-lg shadow border border-blue-100 bg-white"
+              variants={listVariants}
+            >
               <table className="min-w-full divide-y divide-blue-200">
                 <thead className="bg-blue-100">
                   <tr>
@@ -121,8 +169,17 @@ export default function ProductsList() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-blue-200">
-                  {productos.map(producto => (
-                    <tr key={producto.id} className="hover:bg-blue-50 transition-colors">
+                  {productos.map((producto, index) => (
+                    <motion.tr 
+                      key={producto.id} 
+                      className="hover:bg-blue-50 transition-colors"
+                      variants={itemVariants}
+                      custom={index + 3}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      layout
+                    >
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{producto.id}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{producto.nombre}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -130,30 +187,38 @@ export default function ProductsList() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex justify-end gap-2">
-                          <button
+                          <motion.button
                             onClick={() => setProductoEditar(producto)}
                             className="text-blue-600 hover:text-blue-900 p-1 rounded-full hover:bg-blue-100 transition-colors"
                             title="Editar producto"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                           >
                             <i className="pi pi-pencil" />
-                          </button>
-                          <button
+                          </motion.button>
+                          <motion.button
                             onClick={() => eliminarProducto(producto.id)}
                             className="text-red-600 hover:text-red-900 p-1 rounded-full hover:bg-red-100 transition-colors"
                             title="Eliminar producto"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                           >
                             <i className="pi pi-trash" />
-                          </button>
+                          </motion.button>
                         </div>
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-            <div className="md:hidden space-y-4">
-              {productos.map(producto => (
-                <div 
+            </motion.div>
+
+            <motion.div 
+              className="md:hidden space-y-4"
+              variants={listVariants}
+            >
+              {productos.map((producto, index) => (
+                <motion.div 
                   key={producto.id}
                   className="
                     bg-white rounded-lg shadow 
@@ -161,11 +226,17 @@ export default function ProductsList() {
                     p-4
                     hover:shadow-md transition-shadow
                   "
+                  variants={itemVariants}
+                  custom={index + 3}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  layout
                 >
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="text-lg font-semibold text-blue-700">{producto.nombre}</h3>
                     <div className="flex gap-2">
-                      <button
+                      <motion.button
                         onClick={() => setProductoEditar(producto)}
                         className="
                           text-blue-600 hover:text-blue-900 
@@ -174,10 +245,12 @@ export default function ProductsList() {
                           transition-colors
                         "
                         title="Editar producto"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                       >
                         <i className="pi pi-pencil" />
-                      </button>
-                      <button
+                      </motion.button>
+                      <motion.button
                         onClick={() => eliminarProducto(producto.id)}
                         className="
                           text-red-600 hover:text-red-900 
@@ -186,9 +259,11 @@ export default function ProductsList() {
                           transition-colors
                         "
                         title="Eliminar producto"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                       >
                         <i className="pi pi-trash" />
-                      </button>
+                      </motion.button>
                     </div>
                   </div>
                   <div className="space-y-2 text-sm">
@@ -201,12 +276,12 @@ export default function ProductsList() {
                       <span>${producto.precio.toFixed(2)}</span>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
-          </>
+            </motion.div>
+          </AnimatePresence>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

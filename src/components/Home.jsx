@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+
 export default function Home() {
   // Array de características principales de la aplicación
   const features = [
@@ -18,20 +20,68 @@ export default function Home() {
     }
   ];
 
+  // Variantes de animación para las cards
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.2,
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    }),
+    hover: {
+      y: -5,
+      transition: {
+        duration: 0.2,
+        ease: "easeInOut"
+      }
+    }
+  };
+
   return (
     <div className="min-h-[calc(100vh-200px)] flex flex-col items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
       {/* Hero Section */}
-      <div className="text-center mb-12 max-w-3xl mx-auto">
-        <h1 className="text-4xl sm:text-5xl font-bold text-blue-700 mb-6 flex items-center justify-center gap-3">
-          <span className="text-4xl sm:text-5xl">🛒</span>
+      <motion.div 
+        className="text-center mb-12 max-w-3xl mx-auto"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        <motion.h1 
+          className="text-4xl sm:text-5xl font-bold text-blue-700 mb-6 flex items-center justify-center gap-3"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+        >
+          <motion.span 
+            className="text-4xl sm:text-5xl"
+            initial={{ rotate: -10 }}
+            animate={{ rotate: 0 }}
+            transition={{ delay: 0.4, duration: 0.5, type: "spring", stiffness: 200 }}
+          >
+            🛒
+          </motion.span>
           Bienvenido a Mi App
-        </h1>
-        <p className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed">
+        </motion.h1>
+        <motion.p 
+          className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
           Una aplicación moderna para gestionar productos y usuarios de manera eficiente.
           Diseñada con las mejores prácticas de desarrollo web y una interfaz intuitiva.
-        </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <a 
+        </motion.p>
+        <motion.div 
+          className="flex flex-wrap justify-center gap-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+        >
+          <motion.a 
             href="/productos" 
             className="
               bg-blue-600 hover:bg-blue-700 
@@ -42,11 +92,13 @@ export default function Home() {
               flex items-center gap-2
               text-base sm:text-lg
             "
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <i className="pi pi-shopping-cart" />
             Ver Productos
-          </a>
-          <a 
+          </motion.a>
+          <motion.a 
             href="/usuarios" 
             className="
               bg-green-600 hover:bg-green-700 
@@ -57,59 +109,87 @@ export default function Home() {
               flex items-center gap-2
               text-base sm:text-lg
             "
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <i className="pi pi-users" />
             Ver Usuarios
-          </a>
-        </div>
-      </div>
+          </motion.a>
+        </motion.div>
+      </motion.div>
 
       {/* Features Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl w-full">
         {features.map((feature, index) => (
-          <div 
+          <motion.div 
             key={index}
             className="
               bg-white rounded-xl shadow-lg 
               p-6 border border-blue-100
               hover:shadow-xl transition-shadow duration-300
-              transform hover:-translate-y-1 transition-transform
             "
+            variants={cardVariants}
+            initial="hidden"
+            animate="visible"
+            whileHover="hover"
+            custom={index}
           >
-            <div className="text-4xl mb-4">{feature.icon}</div>
+            <motion.div 
+              className="text-4xl mb-4"
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              {feature.icon}
+            </motion.div>
             <h3 className="text-xl font-semibold text-blue-700 mb-3">
               {feature.title}
             </h3>
             <p className="text-gray-600 leading-relaxed">
               {feature.description}
             </p>
-          </div>
+          </motion.div>
         ))}
       </div>
 
       {/* Tech Stack Section */}
-      <div className="mt-16 text-center max-w-3xl mx-auto">
-        <h2 className="text-2xl font-semibold text-blue-700 mb-6">
+      <motion.div 
+        className="mt-16 text-center max-w-3xl mx-auto"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.h2 
+          className="text-2xl font-semibold text-blue-700 mb-6"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+        >
           Tecnologías Utilizadas
-        </h2>
-        <div className="flex flex-wrap justify-center gap-4 text-gray-600">
-          <span className="px-4 py-2 bg-blue-50 rounded-full text-sm font-medium">
-            React
-          </span>
-          <span className="px-4 py-2 bg-blue-50 rounded-full text-sm font-medium">
-            Tailwind CSS
-          </span>
-          <span className="px-4 py-2 bg-blue-50 rounded-full text-sm font-medium">
-            PrimeReact
-          </span>
-          <span className="px-4 py-2 bg-blue-50 rounded-full text-sm font-medium">
-            Axios
-          </span>
-          <span className="px-4 py-2 bg-blue-50 rounded-full text-sm font-medium">
-            React Router
-          </span>
-        </div>
-      </div>
+        </motion.h2>
+        <motion.div 
+          className="flex flex-wrap justify-center gap-4 text-gray-600"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+        >
+          {["React", "Tailwind CSS", "PrimeReact", "Axios", "React Router"].map((tech, index) => (
+            <motion.span 
+              key={tech}
+              className="px-4 py-2 bg-blue-50 rounded-full text-sm font-medium"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 * index }}
+              whileHover={{ scale: 1.05, backgroundColor: "#EBF5FF" }}
+            >
+              {tech}
+            </motion.span>
+          ))}
+        </motion.div>
+      </motion.div>
     </div>
   );
 }
