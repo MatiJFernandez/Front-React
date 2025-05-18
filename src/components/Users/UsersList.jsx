@@ -77,13 +77,21 @@ export default function UsersList() {
 
   return (
     <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
         <h2 className="text-xl font-bold text-blue-700 flex items-center gap-2">
           <span className="text-2xl">👤</span> Lista de Usuarios
         </h2>
         <button
           onClick={() => exportUsersToPDF(usuarios)}
-          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow transition flex items-center gap-2"
+          className="
+            bg-green-500 hover:bg-green-600 
+            text-white font-bold 
+            py-2 px-4 rounded shadow 
+            transition flex items-center gap-2
+            w-full sm:w-auto
+            justify-center
+            text-sm sm:text-base
+          "
           title="Exportar a PDF"
           disabled={isLoading || usuarios.length === 0}
         >
@@ -95,51 +103,112 @@ export default function UsersList() {
         onUsuarioGuardado={handleUsuarioGuardado}
         limpiarEdicion={() => setUsuarioEditar(null)}
       />
-      <div className="overflow-x-auto mt-6 rounded-lg shadow border border-blue-100 bg-white">
+      <div className="mt-6">
         {isLoading ? (
           <div className="p-4">
             <TableSkeleton rows={5} columns={5} />
           </div>
         ) : (
-          <table className="min-w-full divide-y divide-blue-200">
-            <thead className="bg-blue-100">
-              <tr>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">ID</th>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Nombre</th>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Email</th>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Edad</th>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-blue-50">
-              {usuarios.map((row) => (
-                <tr key={row.id} className="hover:bg-blue-50 transition">
-                  <td className="px-4 py-2 text-sm text-blue-900">{row.id}</td>
-                  <td className="px-4 py-2 text-sm text-blue-900">{row.nombre}</td>
-                  <td className="px-4 py-2 text-sm text-blue-900">{row.email}</td>
-                  <td className="px-4 py-2 text-sm text-blue-900">{row.edad}</td>
-                  <td className="px-4 py-2">
+          <>
+            <div className="hidden md:block overflow-x-auto rounded-lg shadow border border-blue-100 bg-white">
+              <table className="min-w-full divide-y divide-blue-200">
+                <thead className="bg-blue-100">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">ID</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Nombre</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Email</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Edad</th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-blue-700 uppercase tracking-wider">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-blue-200">
+                  {usuarios.map(usuario => (
+                    <tr key={usuario.id} className="hover:bg-blue-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{usuario.id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{usuario.nombre}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{usuario.email}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{usuario.edad}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => setUsuarioEditar(usuario)}
+                            className="text-blue-600 hover:text-blue-900 p-1 rounded-full hover:bg-blue-100 transition-colors"
+                            title="Editar usuario"
+                          >
+                            <i className="pi pi-pencil" />
+                          </button>
+                          <button
+                            onClick={() => eliminarUsuario(usuario.id)}
+                            className="text-red-600 hover:text-red-900 p-1 rounded-full hover:bg-red-100 transition-colors"
+                            title="Eliminar usuario"
+                          >
+                            <i className="pi pi-trash" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="md:hidden space-y-4">
+              {usuarios.map(usuario => (
+                <div 
+                  key={usuario.id}
+                  className="
+                    bg-white rounded-lg shadow 
+                    border border-blue-100 
+                    p-4
+                    hover:shadow-md transition-shadow
+                  "
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-lg font-semibold text-blue-700">{usuario.nombre}</h3>
                     <div className="flex gap-2">
                       <button
-                        className="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-1 px-3 rounded shadow transition"
-                        onClick={() => setUsuarioEditar(row)}
-                        title="Editar"
+                        onClick={() => setUsuarioEditar(usuario)}
+                        className="
+                          text-blue-600 hover:text-blue-900 
+                          p-2 rounded-full 
+                          hover:bg-blue-100 
+                          transition-colors
+                        "
+                        title="Editar usuario"
                       >
                         <i className="pi pi-pencil" />
                       </button>
                       <button
-                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded shadow transition"
-                        onClick={() => eliminarUsuario(row.id)}
-                        title="Eliminar"
+                        onClick={() => eliminarUsuario(usuario.id)}
+                        className="
+                          text-red-600 hover:text-red-900 
+                          p-2 rounded-full 
+                          hover:bg-red-100 
+                          transition-colors
+                        "
+                        title="Eliminar usuario"
                       >
                         <i className="pi pi-trash" />
                       </button>
                     </div>
-                  </td>
-                </tr>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <i className="pi pi-id-card text-blue-500" />
+                      <span>ID: {usuario.id}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <i className="pi pi-envelope text-blue-500" />
+                      <span>{usuario.email}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <i className="pi pi-calendar text-blue-500" />
+                      <span>{usuario.edad} años</span>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </>
         )}
       </div>
     </div>
